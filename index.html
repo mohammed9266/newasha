@@ -89,7 +89,6 @@
 
     .section-title { font-size: 18px; font-weight: 700; color: #e2e8f0; margin-bottom: 14px; }
     
-    /* شبكة بطاقات الأعضاء */
     .members-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 12px; margin-bottom: 24px; }
     .member-card {
       background: var(--surface);
@@ -107,7 +106,7 @@
     .status-debt { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
 
     .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; overflow-x: auto; margin-bottom: 24px; }
-    table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; min-width: 900px; }
+    table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; min-width: 850px; }
     th { background: #0b132b; color: var(--text-muted); padding: 12px 8px; font-weight: 700; border-bottom: 1px solid var(--border); }
     td { padding: 12px 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
 
@@ -156,7 +155,43 @@
       border: 1px solid var(--border);
       background: var(--bg);
       color: #fff;
-      font-size: 13px;
+      font-size: 14px;
+    }
+
+    /* تصميم أزرار التحكم بالكمية (+ و -) للجوال */
+    .stepper-container {
+      display: flex;
+      align-items: center;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .stepper-btn {
+      background: var(--surface-light);
+      border: none;
+      color: var(--primary);
+      width: 44px;
+      height: 42px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+      transition: background 0.15s;
+    }
+    .stepper-btn:active { background: var(--primary); color: #0b132b; }
+    .stepper-input {
+      flex: 1;
+      border: none !important;
+      background: transparent !important;
+      text-align: center;
+      font-size: 16px !important;
+      font-weight: bold;
+      color: #fff !important;
+      padding: 8px 0 !important;
     }
 
     .pricing-hint {
@@ -238,7 +273,7 @@
     </div>
   </div>
 
-  <!-- Members Grid (مع زر دفع القطة لكل عضو) -->
+  <!-- Members Grid -->
   <div class="section-title">👥 حالة الأعضاء وتصفير القطة لكل عضو</div>
   <div class="members-grid" id="membersContainer"></div>
 
@@ -309,25 +344,31 @@
         </div>
       </div>
 
+      <!-- حقول الدجاج والرز مع أزرار الزيادة والنقصان للجوال -->
       <div style="display: flex; gap: 10px;">
         <div class="form-group" style="flex: 1;">
-          <label>عدد الدجاج (زيادة بنصف: 1.5، 2، 2.5...)</label>
-          <input type="number" id="chickenQty" value="2" min="0" step="0.5" oninput="autoCalculate()">
+          <label>عدد الدجاج (± 0.5)</label>
+          <div class="stepper-container">
+            <button type="button" class="stepper-btn" onclick="stepValue('chickenQty', -0.5)">▼</button>
+            <input type="number" id="chickenQty" class="stepper-input" value="2" min="0" step="0.5" oninput="autoCalculate()">
+            <button type="button" class="stepper-btn" onclick="stepValue('chickenQty', 0.5)">▲</button>
+          </div>
         </div>
         <div class="form-group" style="flex: 1;">
-          <label>أكواب الرز</label>
-          <input type="number" id="riceQty" value="2" min="0" step="1" oninput="autoCalculate()">
+          <label>أكواب الرز (± 1)</label>
+          <div class="stepper-container">
+            <button type="button" class="stepper-btn" onclick="stepValue('riceQty', -1)">▼</button>
+            <input type="number" id="riceQty" class="stepper-input" value="2" min="0" step="1" oninput="autoCalculate()">
+            <button type="button" class="stepper-btn" onclick="stepValue('riceQty', 1)">▲</button>
+          </div>
         </div>
       </div>
 
-      <div style="display: flex; gap: 8px;">
+      <!-- المشروبات والإضافات (تم حذف السلطة) -->
+      <div style="display: flex; gap: 10px;">
         <div class="form-group" style="flex: 1;">
-          <label>البيبسي (ر.س)</label>
+          <label>البيبسي والمشروبات (ر.س)</label>
           <input type="number" id="pepsiCost" value="5" min="0" oninput="autoCalculate()">
-        </div>
-        <div class="form-group" style="flex: 1;">
-          <label>سلطات (ر.س)</label>
-          <input type="number" id="saladCost" value="4" min="0" oninput="autoCalculate()">
         </div>
         <div class="form-group" style="flex: 1;">
           <label>إضافات أخرى (ر.س)</label>
@@ -395,6 +436,20 @@
     });
   }
 
+  // دوال التحكم بالأسهم (+ و -)
+  function stepValue(inputId, step) {
+    const input = document.getElementById(inputId);
+    let val = parseFloat(input.value) || 0;
+    val = Math.max(0, val + step);
+    if (inputId === 'chickenQty') {
+      val = Math.round(val * 2) / 2;
+    } else {
+      val = Math.round(val);
+    }
+    input.value = val;
+    autoCalculate();
+  }
+
   function getSheetUrl() {
     return `https://docs.google.com/spreadsheets/d/1-rFMRDa9R95g9UNscJDgNIfU7K6Uw-fKiG5jor_aU-c/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(currentSheet)}`;
   }
@@ -440,7 +495,6 @@
         chickenQty: chicken,
         riceQty: rice,
         pepsiCost: pepsi,
-        saladCost: 0,
         extraCost: 0,
         totalCost: total,
         attendees: finalAttendees,
@@ -469,7 +523,7 @@
 
     mealsData.forEach(meal => {
       totalExpenses += meal.totalCost;
-      const extras = (meal.pepsiCost + meal.saladCost + meal.extraCost);
+      const extras = (meal.pepsiCost + (meal.extraCost || 0));
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${meal.id}</td>
@@ -493,9 +547,7 @@
     document.getElementById('totalExpenses').innerText = totalExpenses.toLocaleString() + ' ر.س';
   }
 
-  // توزيع التكلفة بالتساوي على الحضور فقط دون تسجيل أي فائض للمصوت
   function calculateMembersFinances() {
-    // الاحتفاظ بالمدفوعات التي سددها الأعضاء سابقاً
     const oldPaid = {};
     memberNames.forEach(m => {
       oldPaid[m] = membersStats[m] ? membersStats[m].paidAmount : 0;
@@ -507,12 +559,11 @@
       meal.attendees.forEach(att => {
         if (membersStats[att]) {
           membersStats[att].mealsCount += 1;
-          membersStats[att].totalShare += meal.perPerson; // نصيب الفرد فقط
+          membersStats[att].totalShare += meal.perPerson;
         }
       });
     });
 
-    // استرجاع المدفوعات المسجلة
     memberNames.forEach(m => {
       membersStats[m].paidAmount = oldPaid[m] || 0;
     });
@@ -572,7 +623,6 @@
       totalOutstanding === 0 ? "حالة التسوية: تسوية مكتملة مع صفر مديونيات معلقة ✓" : `يوجد متبقيات معلقة بإجمالي: ${Math.round(totalOutstanding)} ر.س`;
   }
 
-  // تصفير القطة لعضو محدد
   function payMember(name) {
     if (membersStats[name]) {
       membersStats[name].paidAmount = membersStats[name].totalShare;
@@ -580,7 +630,6 @@
     }
   }
 
-  // تصفير القطة للجميع
   function markAllAsPaid() {
     if (confirm("هل تم استلام مبالغ القطة من جميع الأعضاء وتأكيد السداد بالكامل؟")) {
       memberNames.forEach(name => {
@@ -614,12 +663,11 @@
 
     const riceQty = parseFloat(document.getElementById('riceQty').value) || 0;
     const pepsi = parseFloat(document.getElementById('pepsiCost').value) || 0;
-    const salad = parseFloat(document.getElementById('saladCost').value) || 0;
     const extra = parseFloat(document.getElementById('extraCost').value) || 0;
 
     const chickenTotal = chickenQty * CHICKEN_PRICE;
     const riceTotal = riceQty * RICE_PRICE;
-    const total = chickenTotal + riceTotal + pepsi + salad + extra;
+    const total = chickenTotal + riceTotal + pepsi + extra;
 
     const checkedAttendees = Array.from(document.querySelectorAll('#attendanceCheckboxes input:checked')).map(cb => cb.value);
     const count = checkedAttendees.length;
@@ -640,7 +688,6 @@
     document.getElementById('chickenQty').value = 2;
     document.getElementById('riceQty').value = 2;
     document.getElementById('pepsiCost').value = 5;
-    document.getElementById('saladCost').value = 4;
     document.getElementById('extraCost').value = 0;
     buildAttendanceCheckboxes();
     autoCalculate();
@@ -658,7 +705,6 @@
     document.getElementById('chickenQty').value = meal.chickenQty;
     document.getElementById('riceQty').value = meal.riceQty;
     document.getElementById('pepsiCost').value = meal.pepsiCost;
-    document.getElementById('saladCost').value = meal.saladCost || 0;
     document.getElementById('extraCost').value = meal.extraCost || 0;
     buildAttendanceCheckboxes(meal.attendees);
     autoCalculate();
@@ -693,7 +739,6 @@
         meal.chickenQty = calc.chickenQty;
         meal.riceQty = parseFloat(document.getElementById('riceQty').value) || 0;
         meal.pepsiCost = parseFloat(document.getElementById('pepsiCost').value) || 0;
-        meal.saladCost = parseFloat(document.getElementById('saladCost').value) || 0;
         meal.extraCost = parseFloat(document.getElementById('extraCost').value) || 0;
         meal.totalCost = calc.total;
         meal.attendees = calc.checkedAttendees;
@@ -707,7 +752,6 @@
         chickenQty: calc.chickenQty,
         riceQty: parseFloat(document.getElementById('riceQty').value) || 0,
         pepsiCost: parseFloat(document.getElementById('pepsiCost').value) || 0,
-        saladCost: parseFloat(document.getElementById('saladCost').value) || 0,
         extraCost: parseFloat(document.getElementById('extraCost').value) || 0,
         totalCost: calc.total,
         attendees: calc.checkedAttendees,
