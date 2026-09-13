@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>بيان العشيان - الداش بورد</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .header-bar {
+      height: 48px;
+      background-color: #1e293b;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .header-bar a {
+      color: #38bdf8;
+      text-decoration: none;
+      font-size: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 6px 12px;
+      border-radius: 6px;
+    }
+    .iframe-container {
+      width: 100%;
+      height: calc(100% - 48px);
+      position: relative;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- شريط علوي أنيق للجوال -->
+  <div class="header-bar">
+    <span>لوحة متابعة العشيان</span>
+    <a href="https://docs.google.com/spreadsheets/d/1-rFMRDa9R95g9UNscJDgNIfU7K6Uw-fKiG5jor_aU-c/edit?gid=85231503" target="_blank">فتح في التطبيق ↗</a>
+  </div>
+
+  <!-- تضمين صفحة الداش بورد كما هي تماماً -->
+  <div class="iframe-container">
+    <iframe 
+      src="https://docs.google.com/spreadsheets/d/1-rFMRDa9R95g9UNscJDgNIfU7K6Uw-fKiG5jor_aU-c/htmlembed?gid=85231503&widget=false&chrome=false" 
+      allowfullscreen>
+    </iframe>
+  </div>
+
+</body>
+</html>
