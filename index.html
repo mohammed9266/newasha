@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dinner Group Expense Tracker Dashboard</title>
+  <title>لوحة متابعة قطة العشيان</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -22,14 +22,12 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
     body { background-color: var(--bg); color: var(--text); padding: 16px; min-height: 100vh; }
-    .container { max-width: 1200px; margin: 0 auto; }
+    .container { max-width: 1250px; margin: 0 auto; }
 
-    /* رأس الصفحة وأزرار التحكم الرئيسية */
     .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
-    .header h1 { font-size: 24px; font-weight: 800; color: #fff; }
+    .header h1 { font-size: 24px; font-weight: 800; }
     .header-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 
-    /* الأزرار والقوائم */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -45,11 +43,10 @@
     .btn-primary { background: var(--primary); color: #0b132b; }
     .btn-primary:hover { background: var(--primary-hover); }
     .btn-success { background: rgba(16, 185, 129, 0.15); color: var(--success); border-color: var(--success); }
-    .btn-success:hover { background: var(--success); color: #fff; }
     .btn-outline { background: var(--surface); color: #fff; border-color: var(--border); }
-    .btn-outline:hover { background: var(--surface-light); border-color: var(--primary); }
     .btn-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); border-color: var(--warning); }
-    .btn-warning:hover { background: var(--warning); color: #0b132b; }
+    .btn-danger-sm { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; }
+    .btn-edit-sm { background: rgba(72, 202, 228, 0.15); color: var(--primary); border: 1px solid var(--primary); padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; margin-left: 4px; }
 
     .month-select {
       background: var(--surface);
@@ -60,34 +57,28 @@
       font-size: 13px;
       font-weight: bold;
       outline: none;
-      cursor: pointer;
     }
 
-    /* بطاقات الملخص العلوية */
     .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 24px; }
     .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; text-align: center; }
     .stat-title { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
-    .stat-value { font-size: 26px; font-weight: 800; color: #fff; }
+    .stat-value { font-size: 26px; font-weight: 800; }
     .stat-value.primary { color: var(--primary); }
 
-    /* بطاقات الأعضاء */
-    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-    .section-title { font-size: 18px; font-weight: 700; color: #e2e8f0; }
+    .section-title { font-size: 18px; font-weight: 700; color: #e2e8f0; margin-bottom: 14px; }
     .members-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
     .member-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
-    .member-name { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
-    .member-debt { font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; margin-bottom: 6px; }
-    .status-badge { display: inline-block; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+    .member-name { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .member-info { font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .status-badge { display: inline-block; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: bold; margin-top: 4px; }
     .status-paid { background: rgba(16, 185, 129, 0.15); color: var(--success); }
     .status-debt { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
 
-    /* جدول العشيان */
     .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; overflow-x: auto; margin-bottom: 24px; }
-    table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; min-width: 650px; }
+    table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; min-width: 900px; }
     th { background: #0b132b; color: var(--text-muted); padding: 12px 8px; font-weight: 700; border-bottom: 1px solid var(--border); }
     td { padding: 12px 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
 
-    /* شريط التسوية السفلي */
     .settlement-banner {
       background: linear-gradient(90deg, #1c2541, #243056);
       border: 1px solid var(--border);
@@ -100,29 +91,31 @@
       gap: 12px;
     }
 
-    /* النوافذ المنبثقة (Modals) */
+    /* Modals */
     .modal-overlay {
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(0, 0, 0, 0.8);
       z-index: 100;
       justify-content: center;
       align-items: center;
       padding: 16px;
+      overflow-y: auto;
     }
     .modal {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 24px;
-      max-width: 500px;
+      max-width: 620px;
       width: 100%;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      max-height: 90vh;
+      overflow-y: auto;
     }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .modal-close { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; }
-    .form-group { margin-bottom: 14px; }
+    .modal-close { background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
+    .form-group { margin-bottom: 12px; }
     .form-group label { display: block; font-size: 13px; margin-bottom: 6px; color: var(--text-muted); }
     .form-group input, .form-group select {
       width: 100%;
@@ -131,45 +124,59 @@
       border: 1px solid var(--border);
       background: var(--bg);
       color: #fff;
-      font-size: 14px;
+      font-size: 13px;
     }
+    
+    /* شبكة الحضور */
+    .attendance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 8px;
+      background: var(--bg);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-top: 6px;
+    }
+    .attendance-item { display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; }
+    .attendance-item input { width: auto; cursor: pointer; }
+
+    /* صندوق الحسبة التلقائية */
+    .calc-box {
+      background: rgba(72, 202, 228, 0.08);
+      border: 1px dashed var(--primary);
+      border-radius: 10px;
+      padding: 14px;
+      margin: 16px 0;
+      display: flex;
+      justify-content: space-around;
+      text-align: center;
+    }
+    .calc-box div span { display: block; font-size: 11px; color: var(--text-muted); }
+    .calc-box div strong { font-size: 18px; color: var(--primary); }
   </style>
 </head>
 <body>
 
 <div class="container">
   
-  <!-- الشريط العلوي وأزرار التحكم -->
   <div class="header">
     <div>
       <h1>لوحة متابعة قطة العشيان</h1>
       <p style="font-size: 13px; color: var(--text-muted);">Dinner Group Expense Tracker Dashboard</p>
     </div>
     <div class="header-actions">
-      <!-- 1. قائمة الأشهر -->
       <select class="month-select" id="monthSelector" onchange="changeMonth()">
         <option value="m9">عشيان سبتمبر (m9)</option>
         <option value="عشيان يوليو ">عشيان يوليو</option>
       </select>
-
-      <!-- 2. زر مزامنة قيت هب -->
-      <button class="btn btn-outline" onclick="syncWithGitHub()">
-        🔄 مزامنة قيت هب
-      </button>
-
-      <!-- 3. زر بدء قطة شهر جديد -->
-      <button class="btn btn-warning" onclick="openNewMonthModal()">
-        📅 بدء قطة عشاء شهر جديد
-      </button>
-
-      <!-- 4. زر تسجيل عشاء جديد -->
-      <button class="btn btn-primary" onclick="openNewDinnerModal()">
-        + تسجيل عشاء جديد
-      </button>
+      <button class="btn btn-outline" onclick="syncWithGitHub()">🔄 مزامنة قيت هب</button>
+      <button class="btn btn-warning" onclick="openNewMonthModal()">📅 بدء قطة عشاء شهر جديد</button>
+      <button class="btn btn-primary" onclick="openDinnerModal()">+ تسجيل عشاء جديد</button>
     </div>
   </div>
 
-  <!-- بطاقات الملخص العلوية -->
+  <!-- Summary Cards -->
   <div class="summary-grid">
     <div class="stat-card">
       <div class="stat-title">عدد الأعضاء</div>
@@ -189,16 +196,12 @@
     </div>
   </div>
 
-  <!-- شبكة بطاقات الأعضاء الـ 11 -->
-  <div class="section-header">
-    <div class="section-title">👥 حالة الأعضاء والمديونيات</div>
-  </div>
+  <!-- Members Grid -->
+  <div class="section-title">👥 حالة الأعضاء والمديونيات</div>
   <div class="members-grid" id="membersContainer"></div>
 
-  <!-- جدول سجل العشيان -->
-  <div class="section-header">
-    <div class="section-title">📋 سجل وجبات العشاء وتفاصيل التكلفة</div>
-  </div>
+  <!-- Meals Table -->
+  <div class="section-title">📋 سجل وجبات العشاء وتفاصيل التكلفة والإجراءات</div>
   <div class="table-card">
     <table>
       <thead>
@@ -207,72 +210,117 @@
           <th>المصوت / المشتري</th>
           <th>التاريخ</th>
           <th>الدجاج</th>
-          <th>أكواب الرز</th>
-          <th>بيبسي</th>
-          <th>المبلغ</th>
+          <th>الرز</th>
+          <th>مشروبات وإضافات</th>
+          <th>المبلغ الإجمالي</th>
+          <th>عدد الحضور</th>
+          <th>نصيب الفرد</th>
+          <th>الإجراءات</th>
         </tr>
       </thead>
       <tbody id="mealsTableBody">
-        <tr><td colspan="7" style="color: var(--text-muted); padding: 20px;">جاري المزامنة مع الجدول...</td></tr>
+        <tr><td colspan="10" style="color: var(--text-muted); padding: 20px;">جاري تحميل البيانات...</td></tr>
       </tbody>
     </table>
   </div>
 
-  <!-- شريط التسوية السفلي وزر تم الدفع من الجميع -->
+  <!-- Settlement Banner -->
   <div class="settlement-banner">
     <div>
-      <div style="font-weight: bold; font-size: 15px;" id="settlementStatusText">حالة التسوية: الحسابات متوازنة</div>
-      <div style="font-size: 12px; color: var(--text-muted);">يمكن تصفير المديونيات لجميع الأعضاء عند اكتمال التحويلات</div>
+      <div style="font-weight: bold; font-size: 15px;" id="settlementStatusText">حالة التسوية: تسوية مكتملة</div>
+      <div style="font-size: 12px; color: var(--text-muted);">يمكن تصفير المديونيات لجميع الأعضاء عند اكتمال التحويلات المالية</div>
     </div>
-    <!-- 5. زر تم دفع القطة من الجميع -->
-    <button class="btn btn-success" onclick="markAllAsPaid()">
-      ✓ تم دفع القطة من الجميع
-    </button>
+    <button class="btn btn-success" onclick="markAllAsPaid()">✓ تم دفع القطة من الجميع</button>
   </div>
 
 </div>
 
-<!-- نافذة تسجيل عشاء جديد -->
+<!-- نافذة تسجيل / تعديل العشاء -->
 <div class="modal-overlay" id="dinnerModal">
   <div class="modal">
     <div class="modal-header">
-      <h3>تسجيل عشاء جديد</h3>
+      <h3 id="modalTitle">تسجيل عشاء جديد</h3>
       <button class="modal-close" onclick="closeModal('dinnerModal')">✕</button>
     </div>
-    <form id="dinnerForm" onsubmit="submitDinner(event)">
-      <div class="form-group">
-        <label>المصوت / المشتري</label>
-        <select id="dinnerBuyer" required>
-          <option value="">اختر العضو</option>
-          <option>سليمان</option><option>حامد</option><option>الساير</option>
-          <option>عبدالرحمن</option><option>علي</option><option>سلمان</option>
-          <option>الجاسر</option><option>محمد</option><option>حسين</option>
-          <option>مشعل</option><option>خالد</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>التاريخ</label>
-        <input type="date" id="dinnerDate" required>
-      </div>
+    <form id="dinnerForm" onsubmit="saveDinner(event)">
+      <input type="hidden" id="editRowId" value="">
+      
       <div style="display: flex; gap: 10px;">
         <div class="form-group" style="flex: 1;">
-          <label>الدجاج</label>
-          <input type="number" id="dinnerChicken" value="2" min="0">
+          <label>المصوت / المشتري</label>
+          <select id="dinnerBuyer" required>
+            <option value="">اختر العضو</option>
+            <option>سليمان</option><option>حامد</option><option>الساير</option>
+            <option>عبدالرحمن</option><option>علي</option><option>سلمان</option>
+            <option>الجاسر</option><option>محمد</option><option>حسين</option>
+            <option>مشعل</option><option>خالد</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label>التاريخ</label>
+          <input type="date" id="dinnerDate" required>
+        </div>
+      </div>
+
+      <!-- كميات وتكاليف الدجاج والرز -->
+      <div style="display: flex; gap: 8px;">
+        <div class="form-group" style="flex: 1;">
+          <label>عدد الدجاج</label>
+          <input type="number" id="chickenQty" value="2" min="0" oninput="autoCalculate()">
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label>سعر الحبة (ر.س)</label>
+          <input type="number" id="chickenPrice" value="22" min="0" oninput="autoCalculate()">
         </div>
         <div class="form-group" style="flex: 1;">
           <label>أكواب الرز</label>
-          <input type="number" id="dinnerRice" value="2" min="0">
+          <input type="number" id="riceQty" value="2" min="0" oninput="autoCalculate()">
         </div>
         <div class="form-group" style="flex: 1;">
-          <label>بيبسي</label>
-          <input type="number" id="dinnerPepsi" value="1" min="0">
+          <label>سعر الكوب (ر.س)</label>
+          <input type="number" id="ricePrice" value="5" min="0" oninput="autoCalculate()">
         </div>
       </div>
-      <div class="form-group">
-        <label>المبلغ الإجمالي (ر.س)</label>
-        <input type="number" id="dinnerAmount" placeholder="مثال: 75" required>
+
+      <!-- المشروبات والإضافات (بيبسي / سلطات / إضافات) -->
+      <div style="display: flex; gap: 8px;">
+        <div class="form-group" style="flex: 1;">
+          <label>البيبسي (ر.س)</label>
+          <input type="number" id="pepsiCost" value="5" min="0" oninput="autoCalculate()">
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label>سلطات (ر.س)</label>
+          <input type="number" id="saladCost" value="4" min="0" oninput="autoCalculate()">
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label>إضافات أخرى (ر.س)</label>
+          <input type="number" id="extraCost" value="0" min="0" oninput="autoCalculate()">
+        </div>
       </div>
-      <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px;">حفظ وتأكيد العشاء</button>
+
+      <!-- اختيار الحضور لتوزيع القطة -->
+      <div class="form-group">
+        <label>المشاركون بالعشاء (توزيع القطة عليهم بالتساوي):</label>
+        <div class="attendance-grid" id="attendanceCheckboxes"></div>
+      </div>
+
+      <!-- صندوق الحسبة التلقائية المباشرة -->
+      <div class="calc-box">
+        <div>
+          <span>المبلغ الإجمالي</span>
+          <strong id="autoTotalAmount">0 ر.س</strong>
+        </div>
+        <div>
+          <span>عدد المشاركين</span>
+          <strong id="autoAttendeesCount">0</strong>
+        </div>
+        <div>
+          <span>نصيب كل مشارك</span>
+          <strong id="autoPerPersonAmount">0 ر.س</strong>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 15px;">حفظ وتثبيت العشاء</button>
     </form>
   </div>
 </div>
@@ -299,131 +347,329 @@
   ];
 
   let currentSheet = "m9";
-  let membersDebts = {};
-  memberNames.forEach(m => membersDebts[m] = 0);
+  let mealsData = [];
+  let membersStats = {};
 
-  // رابط تصدير بيانات الورقة المحددة مباشرة
+  function initMembers() {
+    membersStats = {};
+    memberNames.forEach(m => {
+      membersStats[m] = { mealsCount: 0, debt: 0, paid: 0 };
+    });
+  }
+
+  // رابط التصدير المباشر
   function getSheetUrl() {
     return `https://docs.google.com/spreadsheets/d/1-rFMRDa9R95g9UNscJDgNIfU7K6Uw-fKiG5jor_aU-c/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(currentSheet)}`;
   }
 
-  // 1. مزامنة قيت هب مع Google Sheets
   async function syncWithGitHub() {
+    initMembers();
     const tableBody = document.getElementById('mealsTableBody');
-    tableBody.innerHTML = `<tr><td colspan="7" style="color: var(--primary); padding: 20px;">🔄 جاري المزامنة مع Google Sheets و GitHub...</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="10" style="color: var(--primary); padding: 20px;">🔄 جاري المزامنة مع الجدول وحساب المعادلات...</td></tr>`;
+    
     try {
       const res = await fetch(getSheetUrl());
       const text = await res.text();
-      parseAndRender(text);
+      parseCSV(text);
     } catch (e) {
-      tableBody.innerHTML = `<tr><td colspan="7" style="color: var(--danger); padding: 20px;">تعذر جلب البيانات. تأكد من اتصال الإنترنت وصلاحيات المشاركة.</td></tr>`;
+      tableBody.innerHTML = `<tr><td colspan="10" style="color: var(--danger); padding: 20px;">تعذر جلب البيانات. تأكد من إعدادات المشاركة.</td></tr>`;
     }
   }
 
-  function parseAndRender(csvText) {
+  function parseCSV(csvText) {
     const lines = csvText.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
-    const mealRows = lines.filter(r => !isNaN(parseInt(r[0])) && parseInt(r[0]) > 0 && parseInt(r[0]) <= 30 && r[1]);
+    const rawMeals = lines.filter(r => !isNaN(parseInt(r[0])) && parseInt(r[0]) > 0 && parseInt(r[0]) <= 30 && r[1]);
 
-    let total = 0;
+    mealsData = rawMeals.map((r, idx) => {
+      const chicken = parseFloat(r[3]) || 0;
+      const rice = parseFloat(r[4]) || 0;
+      const pepsi = parseFloat(r[5]) || 0;
+      const total = parseFloat(r[6]) || (chicken * 22 + rice * 5 + pepsi);
+      
+      // قراءة الحضور من الأعمدة المقابلة للأعضاء
+      const attendees = [];
+      memberNames.forEach((name, mIdx) => {
+        const val = r[7 + mIdx];
+        if (val && val !== '0' && val !== '-' && val !== '') {
+          attendees.push(name);
+        }
+      });
+      const finalAttendees = attendees.length > 0 ? attendees : [...memberNames]; // افتراضي الجميع إذا لم يحدد
+      const perPerson = finalAttendees.length > 0 ? (total / finalAttendees.length) : 0;
+
+      return {
+        id: idx + 1,
+        buyer: r[1],
+        date: r[2] || '-',
+        chickenQty: chicken,
+        riceQty: rice,
+        pepsiCost: pepsi,
+        saladCost: 0,
+        extraCost: 0,
+        totalCost: total,
+        attendees: finalAttendees,
+        perPerson: Math.round(perPerson * 10) / 10
+      };
+    });
+
+    renderAll();
+  }
+
+  function renderAll() {
+    renderTable();
+    calculateMembersFinances();
+    renderMembersCards();
+  }
+
+  function renderTable() {
     const tableBody = document.getElementById('mealsTableBody');
     tableBody.innerHTML = '';
+    let totalExpenses = 0;
 
-    if (mealRows.length === 0) {
-      tableBody.innerHTML = `<tr><td colspan="7" style="color: var(--text-muted); padding: 20px;">لا توجد وجبات مسجلة في هذا الشهر حتى الآن.</td></tr>`;
-    } else {
-      mealRows.forEach(r => {
-        const cost = parseFloat(r[6]) || parseFloat(r[4]) || 0;
-        total += cost;
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${r[0]}</td>
-          <td><strong>${r[1]}</strong></td>
-          <td>${r[2] || '-'}</td>
-          <td>${r[3] || 0}</td>
-          <td>${r[4] || 0}</td>
-          <td>${r[5] || 0}</td>
-          <td style="color: var(--primary); font-weight: bold;">${cost} ر.س</td>
-        `;
-        tableBody.appendChild(tr);
-      });
+    if (mealsData.length === 0) {
+      tableBody.innerHTML = `<tr><td colspan="10" style="color: var(--text-muted); padding: 20px;">لا توجد وجبات مسجلة حتى الآن.</td></tr>`;
+      return;
     }
 
-    document.getElementById('mealsCount').innerText = mealRows.length;
-    document.getElementById('totalExpenses').innerText = total.toLocaleString() + ' ر.س';
+    mealsData.forEach(meal => {
+      totalExpenses += meal.totalCost;
+      const extras = (meal.pepsiCost + meal.saladCost + meal.extraCost);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${meal.id}</td>
+        <td><strong>${meal.buyer}</strong></td>
+        <td>${meal.date}</td>
+        <td>${meal.chickenQty}</td>
+        <td>${meal.riceQty}</td>
+        <td>${extras} ر.س</td>
+        <td style="color: var(--primary); font-weight: bold;">${meal.totalCost} ر.س</td>
+        <td><span style="background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 12px;">${meal.attendees.length} أعضاء</span></td>
+        <td style="color: var(--warning); font-weight: bold;">${meal.perPerson} ر.س</td>
+        <td>
+          <button class="btn-edit-sm" onclick="editDinner(${meal.id})">تعديل ✏️</button>
+          <button class="btn-danger-sm" onclick="deleteDinner(${meal.id})">حذف 🗑️</button>
+        </td>
+      `;
+      tableBody.appendChild(tr);
+    });
 
-    renderMemberCards();
+    document.getElementById('mealsCount').innerText = mealsData.length;
+    document.getElementById('totalExpenses').innerText = totalExpenses.toLocaleString() + ' ر.س';
   }
 
-  function renderMemberCards() {
+  // احتساب مديونيات ونصيب كل عضو تلقائياً بناءً على الحضور والدفع
+  function calculateMembersFinances() {
+    initMembers();
+    mealsData.forEach(meal => {
+      // المشتري دفع المبلغ كاملاً
+      if (membersStats[meal.buyer]) {
+        membersStats[meal.buyer].paid += meal.totalCost;
+      }
+      // كل شخص حضر عليه نصيب الفرد
+      meal.attendees.forEach(att => {
+        if (membersStats[att]) {
+          membersStats[att].mealsCount += 1;
+          membersStats[att].debt += meal.perPerson;
+        }
+      });
+    });
+  }
+
+  function renderMembersCards() {
     const container = document.getElementById('membersContainer');
     container.innerHTML = '';
-    let totalDebt = 0;
+    let totalOutstanding = 0;
 
     memberNames.forEach(name => {
-      const debt = membersDebts[name] || 0;
-      totalDebt += debt;
+      const stats = membersStats[name];
+      const net = Math.round((stats.debt - stats.paid) * 10) / 10;
+      const isIndebted = net > 0;
+      if (isIndebted) totalOutstanding += net;
 
       const card = document.createElement('div');
       card.className = 'member-card';
       card.innerHTML = `
         <div class="member-name">${name}</div>
-        <div class="member-debt">
-          <span>المديونية:</span>
-          <span style="font-weight: bold; color: ${debt > 0 ? 'var(--danger)' : 'var(--text-muted)'}">${debt} ر.س</span>
+        <div class="member-info">
+          <span>حضور العشيان:</span>
+          <strong>${stats.mealsCount} وجبات</strong>
         </div>
-        <span class="status-badge ${debt > 0 ? 'status-debt' : 'status-paid'}">
-          ${debt > 0 ? 'متبقي عليه مبلغ' : 'مسدد بالكامل ✓'}
+        <div class="member-info">
+          <span>الصافي:</span>
+          <strong style="color: ${isIndebted ? 'var(--danger)' : 'var(--success)'};">
+            ${isIndebted ? `متبقي عليه: ${net} ر.س` : (net < 0 ? `له فائض: ${Math.abs(net)} ر.س` : 'خالص 0 ر.س')}
+          </strong>
+        </div>
+        <span class="status-badge ${isIndebted ? 'status-debt' : 'status-paid'}">
+          ${isIndebted ? 'متبقي عليه مبلغ' : 'مسدد بالكامل ✓'}
         </span>
       `;
       container.appendChild(card);
     });
 
-    const totalDebtsEl = document.getElementById('totalDebts');
-    totalDebtsEl.innerText = totalDebt + ' ر.س';
-    totalDebtsEl.style.color = totalDebt > 0 ? 'var(--danger)' : 'var(--success)';
+    const debtsEl = document.getElementById('totalDebts');
+    debtsEl.innerText = Math.round(totalOutstanding) + ' ر.س';
+    debtsEl.style.color = totalOutstanding > 0 ? 'var(--danger)' : 'var(--success)';
 
-    document.getElementById('settlementStatusText').innerText = 
-      totalDebt === 0 ? "حالة التسوية: تسوية مكتملة مع صفر مديونيات معلقة ✓" : `يوجد مديونيات معلقة بإجمالي ${totalDebt} ر.س`;
+    document.getElementById('settlementStatusText').innerText =
+      totalOutstanding === 0 ? "حالة التسوية: تسوية مكتملة مع صفر مديونيات معلقة ✓" : `يوجد مديونيات معلقة بإجمالي: ${Math.round(totalOutstanding)} ر.س`;
   }
 
-  // 2. تغيير الشهر من القائمة
+  // بناء مربعات اختيار الحضور الـ 11 في نافذة الإدخال
+  function buildAttendanceCheckboxes(selectedList = []) {
+    const box = document.getElementById('attendanceCheckboxes');
+    box.innerHTML = '';
+    memberNames.forEach(name => {
+      const isChecked = selectedList.length === 0 || selectedList.includes(name);
+      const div = document.createElement('label');
+      div.className = 'attendance-item';
+      div.innerHTML = `
+        <input type="checkbox" value="${name}" ${isChecked ? 'checked' : ''} onchange="autoCalculate()">
+        <span>${name}</span>
+      `;
+      box.appendChild(div);
+    });
+  }
+
+  // الحسبة التلقائية المباشرة في النموذج
+  function autoCalculate() {
+    const chickenQty = parseFloat(document.getElementById('chickenQty').value) || 0;
+    const chickenPrice = parseFloat(document.getElementById('chickenPrice').value) || 0;
+    const riceQty = parseFloat(document.getElementById('riceQty').value) || 0;
+    const ricePrice = parseFloat(document.getElementById('ricePrice').value) || 0;
+    const pepsi = parseFloat(document.getElementById('pepsiCost').value) || 0;
+    const salad = parseFloat(document.getElementById('saladCost').value) || 0;
+    const extra = parseFloat(document.getElementById('extraCost').value) || 0;
+
+    const total = (chickenQty * chickenPrice) + (riceQty * ricePrice) + pepsi + salad + extra;
+
+    const checkedAttendees = Array.from(document.querySelectorAll('#attendanceCheckboxes input:checked')).map(cb => cb.value);
+    const count = checkedAttendees.length;
+    const perPerson = count > 0 ? (total / count) : 0;
+
+    document.getElementById('autoTotalAmount').innerText = Math.round(total) + ' ر.س';
+    document.getElementById('autoAttendeesCount').innerText = count;
+    document.getElementById('autoPerPersonAmount').innerText = (Math.round(perPerson * 10) / 10) + ' ر.س';
+
+    return { total, checkedAttendees, perPerson };
+  }
+
+  // فتح وإغلاق النوافذ
+  function openDinnerModal() {
+    document.getElementById('modalTitle').innerText = "تسجيل عشاء جديد";
+    document.getElementById('editRowId').value = "";
+    document.getElementById('dinnerDate').valueAsDate = new Date();
+    document.getElementById('dinnerBuyer').value = "";
+    document.getElementById('chickenQty').value = 2;
+    document.getElementById('chickenPrice').value = 22;
+    document.getElementById('riceQty').value = 2;
+    document.getElementById('ricePrice').value = 5;
+    document.getElementById('pepsiCost').value = 5;
+    document.getElementById('saladCost').value = 4;
+    document.getElementById('extraCost').value = 0;
+    buildAttendanceCheckboxes();
+    autoCalculate();
+    document.getElementById('dinnerModal').style.display = 'flex';
+  }
+
+  // إجراء التعديل
+  function editDinner(id) {
+    const meal = mealsData.find(m => m.id === id);
+    if (!meal) return;
+
+    document.getElementById('modalTitle').innerText = `تعديل وجبة العشاء رقم (${id})`;
+    document.getElementById('editRowId').value = id;
+    document.getElementById('dinnerBuyer').value = meal.buyer;
+    document.getElementById('dinnerDate').value = meal.date;
+    document.getElementById('chickenQty').value = meal.chickenQty;
+    document.getElementById('riceQty').value = meal.riceQty;
+    document.getElementById('pepsiCost').value = meal.pepsiCost;
+    document.getElementById('saladCost').value = meal.saladCost || 0;
+    document.getElementById('extraCost').value = meal.extraCost || 0;
+    buildAttendanceCheckboxes(meal.attendees);
+    autoCalculate();
+    document.getElementById('dinnerModal').style.display = 'flex';
+  }
+
+  // إجراء الحذف
+  function deleteDinner(id) {
+    if (confirm(`هل أنت متأكد من حذف العشاء رقم (${id})؟`)) {
+      mealsData = mealsData.filter(m => m.id !== id);
+      renderAll();
+      alert("تم حذف العشاء وتحديث الحسبة بنجاح.");
+    }
+  }
+
+  // حفظ العشاء (إضافة أو تعديل)
+  function saveDinner(e) {
+    e.preventDefault();
+    const editId = document.getElementById('editRowId').value;
+    const buyer = document.getElementById('dinnerBuyer').value;
+    const date = document.getElementById('dinnerDate').value;
+    const calc = autoCalculate();
+
+    if (calc.checkedAttendees.length === 0) {
+      alert("يرجى تحديد مشارك واحد على الأقل لتوزيع القطة!");
+      return;
+    }
+
+    if (editId) {
+      // تعديل
+      const meal = mealsData.find(m => m.id == editId);
+      if (meal) {
+        meal.buyer = buyer;
+        meal.date = date;
+        meal.chickenQty = parseFloat(document.getElementById('chickenQty').value) || 0;
+        meal.riceQty = parseFloat(document.getElementById('riceQty').value) || 0;
+        meal.pepsiCost = parseFloat(document.getElementById('pepsiCost').value) || 0;
+        meal.saladCost = parseFloat(document.getElementById('saladCost').value) || 0;
+        meal.extraCost = parseFloat(document.getElementById('extraCost').value) || 0;
+        meal.totalCost = calc.total;
+        meal.attendees = calc.checkedAttendees;
+        meal.perPerson = Math.round(calc.perPerson * 10) / 10;
+      }
+    } else {
+      // إضافة جديد
+      const newMeal = {
+        id: mealsData.length + 1,
+        buyer: buyer,
+        date: date,
+        chickenQty: parseFloat(document.getElementById('chickenQty').value) || 0,
+        riceQty: parseFloat(document.getElementById('riceQty').value) || 0,
+        pepsiCost: parseFloat(document.getElementById('pepsiCost').value) || 0,
+        saladCost: parseFloat(document.getElementById('saladCost').value) || 0,
+        extraCost: parseFloat(document.getElementById('extraCost').value) || 0,
+        totalCost: calc.total,
+        attendees: calc.checkedAttendees,
+        perPerson: Math.round(calc.perPerson * 10) / 10
+      };
+      mealsData.push(newMeal);
+    }
+
+    closeModal('dinnerModal');
+    renderAll();
+    alert("تم حفظ وتحديث الحسابات تلقائياً!");
+  }
+
+  function markAllAsPaid() {
+    if (confirm("هل تم استلام مبالغ القطة من الجميع وتسوية الحسابات بالكامل؟")) {
+      memberNames.forEach(m => {
+        if (membersStats[m]) {
+          membersStats[m].paid = membersStats[m].debt;
+        }
+      });
+      renderMembersCards();
+      alert("تمت تسوية جميع الحسابات وأصبحت المديونية 0 ر.س للجميع ✓");
+    }
+  }
+
   function changeMonth() {
     currentSheet = document.getElementById('monthSelector').value;
     syncWithGitHub();
   }
 
-  // 3. تم دفع القطة من الجميع
-  function markAllAsPaid() {
-    if (confirm("هل تم استلام مبالغ القطة من جميع الأعضاء وتأكيد السداد بالكامل؟")) {
-      memberNames.forEach(m => membersDebts[m] = 0);
-      renderMemberCards();
-      alert("تم تحديث حالة جميع الأعضاء إلى (مسدد بالكامل ✓) بنجاح!");
-    }
-  }
-
-  // النوافذ وإدارة النماذج
-  function openNewDinnerModal() {
-    document.getElementById('dinnerDate').valueAsDate = new Date();
-    document.getElementById('dinnerModal').style.display = 'flex';
-  }
-  function openNewMonthModal() {
-    document.getElementById('monthModal').style.display = 'flex';
-  }
-  function closeModal(id) {
-    document.getElementById(id).style.display = 'none';
-  }
-
-  function submitDinner(e) {
-    e.preventDefault();
-    const buyer = document.getElementById('dinnerBuyer').value;
-    const amount = document.getElementById('dinnerAmount').value;
-
-    alert(`تم تسجيل العشاء بنجاح!\nالمشتري: ${buyer}\nالمبلغ: ${amount} ر.س`);
-    closeModal('dinnerModal');
-    // إضافة افتراضية في الواجهة ثم إعادة المزامنة
-    syncWithGitHub();
-  }
+  function openNewMonthModal() { document.getElementById('monthModal').style.display = 'flex'; }
+  function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
   function startNewMonth() {
     const name = document.getElementById('newMonthName').value;
@@ -435,11 +681,11 @@
     sel.appendChild(opt);
     sel.value = name;
     closeModal('monthModal');
-    changeMonth();
+    mealsData = [];
+    renderAll();
     alert(`تم فتح دورة عشيان جديدة لشهر: ${name}`);
   }
 
-  // بدء المزامنة تلقائياً فور فتح الصفحة
   syncWithGitHub();
 </script>
 
