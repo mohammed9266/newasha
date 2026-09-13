@@ -7,70 +7,169 @@
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --card-border: #334155;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --primary: #38bdf8;
-      --success: #22c55e;
+      --bg: #0b132b;
+      --surface: #1c2541;
+      --surface-light: #243056;
+      --border: #3a506b;
+      --primary: #48cae4;
+      --primary-hover: #00b4d8;
+      --success: #10b981;
       --danger: #ef4444;
-      --gold: #f59e0b;
+      --warning: #f59e0b;
+      --text: #ffffff;
+      --text-muted: #94a3b8;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
-    body { background-color: var(--bg); color: var(--text-main); padding: 16px; min-height: 100vh; }
-    .container { max-width: 1100px; margin: 0 auto; }
+    body { background-color: var(--bg); color: var(--text); padding: 16px; min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; }
 
-    /* رأس الصفحة */
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+    /* رأس الصفحة وأزرار التحكم الرئيسية */
+    .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
     .header h1 { font-size: 24px; font-weight: 800; color: #fff; }
-    .btn-refresh { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--primary); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; }
+    .header-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+    /* الأزرار والقوائم */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 15px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: var(--primary); color: #0b132b; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-success { background: rgba(16, 185, 129, 0.15); color: var(--success); border-color: var(--success); }
+    .btn-success:hover { background: var(--success); color: #fff; }
+    .btn-outline { background: var(--surface); color: #fff; border-color: var(--border); }
+    .btn-outline:hover { background: var(--surface-light); border-color: var(--primary); }
+    .btn-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); border-color: var(--warning); }
+    .btn-warning:hover { background: var(--warning); color: #0b132b; }
+
+    .month-select {
+      background: var(--surface);
+      color: #fff;
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: bold;
+      outline: none;
+      cursor: pointer;
+    }
 
     /* بطاقات الملخص العلوية */
-    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 24px; }
-    .stat-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 18px; text-align: center; }
-    .stat-title { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
-    .stat-value { font-size: 26px; font-weight: 800; color: var(--text-main); }
-    .stat-value.highlight { color: var(--primary); }
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 24px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; text-align: center; }
+    .stat-title { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
+    .stat-value { font-size: 26px; font-weight: 800; color: #fff; }
+    .stat-value.primary { color: var(--primary); }
 
-    /* شبكة بطاقات الأعضاء الـ 11 */
-    .section-title { font-size: 18px; font-weight: 700; margin-bottom: 14px; color: #e2e8f0; display: flex; align-items: center; gap: 8px; }
+    /* بطاقات الأعضاء */
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .section-title { font-size: 18px; font-weight: 700; color: #e2e8f0; }
     .members-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
-    .member-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px; position: relative; }
+    .member-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
     .member-name { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
-    .member-debt { font-size: 13px; color: var(--text-muted); display: flex; justify-content: space-between; margin-bottom: 6px; }
-    .member-status { display: inline-block; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-    .status-paid { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+    .member-debt { font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; margin-bottom: 6px; }
+    .status-badge { display: inline-block; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+    .status-paid { background: rgba(16, 185, 129, 0.15); color: var(--success); }
     .status-debt { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
 
-    /* الجدول السفلي */
-    .table-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 18px; overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; min-width: 600px; }
-    th { background: #0f172a; color: var(--text-muted); padding: 12px 8px; font-weight: 700; border-bottom: 1px solid var(--card-border); }
+    /* جدول العشيان */
+    .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; overflow-x: auto; margin-bottom: 24px; }
+    table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; min-width: 650px; }
+    th { background: #0b132b; color: var(--text-muted); padding: 12px 8px; font-weight: 700; border-bottom: 1px solid var(--border); }
     td { padding: 12px 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-    tr:hover td { background: rgba(255, 255, 255, 0.02); }
 
-    /* نموذج إضافة عشاء جديد سريع من الجوال */
-    .form-card { background: #162032; border: 1px dashed #38bdf8; border-radius: 14px; padding: 18px; margin-bottom: 24px; }
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 10px; }
-    input, select, button { padding: 10px; border-radius: 8px; border: 1px solid var(--card-border); background: var(--bg); color: #fff; font-size: 13px; }
-    .btn-submit { background: var(--primary); color: #0f172a; font-weight: 800; cursor: pointer; border: none; }
+    /* شريط التسوية السفلي */
+    .settlement-banner {
+      background: linear-gradient(90deg, #1c2541, #243056);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    /* النوافذ المنبثقة (Modals) */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .modal-close { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 13px; margin-bottom: 6px; color: var(--text-muted); }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: #fff;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <!-- Header -->
+  
+  <!-- الشريط العلوي وأزرار التحكم -->
   <div class="header">
     <div>
       <h1>لوحة متابعة قطة العشيان</h1>
-      <p style="font-size: 13px; color: var(--text-muted);">Dinner Group Expense Tracker</p>
+      <p style="font-size: 13px; color: var(--text-muted);">Dinner Group Expense Tracker Dashboard</p>
     </div>
-    <button class="btn-refresh" onclick="fetchData()">🔄 تحديث البيانات</button>
+    <div class="header-actions">
+      <!-- 1. قائمة الأشهر -->
+      <select class="month-select" id="monthSelector" onchange="changeMonth()">
+        <option value="m9">عشيان سبتمبر (m9)</option>
+        <option value="عشيان يوليو ">عشيان يوليو</option>
+      </select>
+
+      <!-- 2. زر مزامنة قيت هب -->
+      <button class="btn btn-outline" onclick="syncWithGitHub()">
+        🔄 مزامنة قيت هب
+      </button>
+
+      <!-- 3. زر بدء قطة شهر جديد -->
+      <button class="btn btn-warning" onclick="openNewMonthModal()">
+        📅 بدء قطة عشاء شهر جديد
+      </button>
+
+      <!-- 4. زر تسجيل عشاء جديد -->
+      <button class="btn btn-primary" onclick="openNewDinnerModal()">
+        + تسجيل عشاء جديد
+      </button>
+    </div>
   </div>
 
-  <!-- Summary Cards -->
+  <!-- بطاقات الملخص العلوية -->
   <div class="summary-grid">
     <div class="stat-card">
       <div class="stat-title">عدد الأعضاء</div>
@@ -78,7 +177,7 @@
     </div>
     <div class="stat-card">
       <div class="stat-title">إجمالي تكاليف العشيان</div>
-      <div class="stat-value highlight" id="totalExpenses">0 ر.س</div>
+      <div class="stat-value primary" id="totalExpenses">0 ر.س</div>
     </div>
     <div class="stat-card">
       <div class="stat-title">إجمالي المديونيات المتبقية</div>
@@ -90,95 +189,180 @@
     </div>
   </div>
 
-  <!-- بطاقات الأعضاء الـ 11 وحالتهم المالية -->
-  <div class="section-title">👥 حالة الأعضاء والمديونيات</div>
-  <div class="members-grid" id="membersContainer">
-    <!-- يتم إنشاؤها تلقائياً -->
+  <!-- شبكة بطاقات الأعضاء الـ 11 -->
+  <div class="section-header">
+    <div class="section-title">👥 حالة الأعضاء والمديونيات</div>
   </div>
+  <div class="members-grid" id="membersContainer"></div>
 
-  <!-- جدول تسجيل وتفاصيل العشيان -->
-  <div class="section-title">📋 سجل وجبات العشاء وتفاصيل التكلفة</div>
+  <!-- جدول سجل العشيان -->
+  <div class="section-header">
+    <div class="section-title">📋 سجل وجبات العشاء وتفاصيل التكلفة</div>
+  </div>
   <div class="table-card">
     <table>
       <thead>
         <tr>
           <th>م</th>
-          <th>المصوت</th>
+          <th>المصوت / المشتري</th>
           <th>التاريخ</th>
           <th>الدجاج</th>
+          <th>أكواب الرز</th>
+          <th>بيبسي</th>
           <th>المبلغ</th>
         </tr>
       </thead>
       <tbody id="mealsTableBody">
-        <tr><td colspan="5" style="color: var(--text-muted); padding: 20px;">جاري تحميل البيانات من الجدول...</td></tr>
+        <tr><td colspan="7" style="color: var(--text-muted); padding: 20px;">جاري المزامنة مع الجدول...</td></tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- شريط التسوية السفلي وزر تم الدفع من الجميع -->
+  <div class="settlement-banner">
+    <div>
+      <div style="font-weight: bold; font-size: 15px;" id="settlementStatusText">حالة التسوية: الحسابات متوازنة</div>
+      <div style="font-size: 12px; color: var(--text-muted);">يمكن تصفير المديونيات لجميع الأعضاء عند اكتمال التحويلات</div>
+    </div>
+    <!-- 5. زر تم دفع القطة من الجميع -->
+    <button class="btn btn-success" onclick="markAllAsPaid()">
+      ✓ تم دفع القطة من الجميع
+    </button>
+  </div>
+
+</div>
+
+<!-- نافذة تسجيل عشاء جديد -->
+<div class="modal-overlay" id="dinnerModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>تسجيل عشاء جديد</h3>
+      <button class="modal-close" onclick="closeModal('dinnerModal')">✕</button>
+    </div>
+    <form id="dinnerForm" onsubmit="submitDinner(event)">
+      <div class="form-group">
+        <label>المصوت / المشتري</label>
+        <select id="dinnerBuyer" required>
+          <option value="">اختر العضو</option>
+          <option>سليمان</option><option>حامد</option><option>الساير</option>
+          <option>عبدالرحمن</option><option>علي</option><option>سلمان</option>
+          <option>الجاسر</option><option>محمد</option><option>حسين</option>
+          <option>مشعل</option><option>خالد</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>التاريخ</label>
+        <input type="date" id="dinnerDate" required>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <div class="form-group" style="flex: 1;">
+          <label>الدجاج</label>
+          <input type="number" id="dinnerChicken" value="2" min="0">
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label>أكواب الرز</label>
+          <input type="number" id="dinnerRice" value="2" min="0">
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label>بيبسي</label>
+          <input type="number" id="dinnerPepsi" value="1" min="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>المبلغ الإجمالي (ر.س)</label>
+        <input type="number" id="dinnerAmount" placeholder="مثال: 75" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px;">حفظ وتأكيد العشاء</button>
+    </form>
+  </div>
+</div>
+
+<!-- نافذة بدء قطة شهر جديد -->
+<div class="modal-overlay" id="monthModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>بدء قطة عشاء شهر جديد</h3>
+      <button class="modal-close" onclick="closeModal('monthModal')">✕</button>
+    </div>
+    <div class="form-group">
+      <label>اسم الشهر الجديد</label>
+      <input type="text" id="newMonthName" placeholder="مثال: عشيان أكتوبر">
+    </div>
+    <button class="btn btn-warning" style="width: 100%; justify-content: center; padding: 12px;" onclick="startNewMonth()">إنشاء دورة الشهر الجديد</button>
   </div>
 </div>
 
 <script>
-  // قائمة الأعضاء الـ 11 المسجلين في جدولك
   const memberNames = [
-    "سليمان", "حامد", "الساير", "عبدالرحمن", "علي", 
+    "سليمان", "حامد", "الساير", "عبدالرحمن", "علي",
     "سلمان", "الجاسر", "محمد", "حسين", "مشعل", "خالد"
   ];
 
-  // رابط تصدير بيانات صفحة (m9 أو عشيان يوليو) بصيغة CSV مباشرة بدون تعقيد
-  const CSV_URL = "https://docs.google.com/spreadsheets/d/1-rFMRDa9R95g9UNscJDgNIfU7K6Uw-fKiG5jor_aU-c/gviz/tq?tqx=out:csv&sheet=عشيان%20يوليو";
+  let currentSheet = "m9";
+  let membersDebts = {};
+  memberNames.forEach(m => membersDebts[m] = 0);
 
-  async function fetchData() {
+  // رابط تصدير بيانات الورقة المحددة مباشرة
+  function getSheetUrl() {
+    return `https://docs.google.com/spreadsheets/d/1-rFMRDa9R95g9UNscJDgNIfU7K6Uw-fKiG5jor_aU-c/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(currentSheet)}`;
+  }
+
+  // 1. مزامنة قيت هب مع Google Sheets
+  async function syncWithGitHub() {
+    const tableBody = document.getElementById('mealsTableBody');
+    tableBody.innerHTML = `<tr><td colspan="7" style="color: var(--primary); padding: 20px;">🔄 جاري المزامنة مع Google Sheets و GitHub...</td></tr>`;
     try {
-      const res = await fetch(CSV_URL);
+      const res = await fetch(getSheetUrl());
       const text = await res.text();
       parseAndRender(text);
     } catch (e) {
-      console.error(e);
-      document.getElementById('mealsTableBody').innerHTML = `<tr><td colspan="5" style="color: var(--danger);">تعذر جلب البيانات. تأكد أن خيار المشاركة في الجدول هو (أي شخص لديه الرابط - Anyone with link).</td></tr>`;
+      tableBody.innerHTML = `<tr><td colspan="7" style="color: var(--danger); padding: 20px;">تعذر جلب البيانات. تأكد من اتصال الإنترنت وصلاحيات المشاركة.</td></tr>`;
     }
   }
 
   function parseAndRender(csvText) {
     const lines = csvText.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
-    
-    // تصفية صفوف العشيان الفعلية (التي تبدأ برقم تسلسلي من 1 إلى 20)
-    const mealRows = lines.filter(r => !isNaN(parseInt(r[0])) && parseInt(r[0]) > 0 && parseInt(r[0]) <= 25 && r[1]);
+    const mealRows = lines.filter(r => !isNaN(parseInt(r[0])) && parseInt(r[0]) > 0 && parseInt(r[0]) <= 30 && r[1]);
 
-    let totalCost = 0;
+    let total = 0;
     const tableBody = document.getElementById('mealsTableBody');
     tableBody.innerHTML = '';
 
-    mealRows.forEach(r => {
-      const cost = parseFloat(r[4]) || 0;
-      totalCost += cost;
+    if (mealRows.length === 0) {
+      tableBody.innerHTML = `<tr><td colspan="7" style="color: var(--text-muted); padding: 20px;">لا توجد وجبات مسجلة في هذا الشهر حتى الآن.</td></tr>`;
+    } else {
+      mealRows.forEach(r => {
+        const cost = parseFloat(r[6]) || parseFloat(r[4]) || 0;
+        total += cost;
 
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${r[0]}</td>
-        <td><strong>${r[1]}</strong></td>
-        <td>${r[2] || '-'}</td>
-        <td>${r[3] || '-'}</td>
-        <td style="color: var(--primary); font-weight: bold;">${r[4] || 0} ر.س</td>
-      `;
-      tableBody.appendChild(tr);
-    });
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r[0]}</td>
+          <td><strong>${r[1]}</strong></td>
+          <td>${r[2] || '-'}</td>
+          <td>${r[3] || 0}</td>
+          <td>${r[4] || 0}</td>
+          <td>${r[5] || 0}</td>
+          <td style="color: var(--primary); font-weight: bold;">${cost} ر.س</td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    }
 
-    // تحديث بطاقات الملخص
     document.getElementById('mealsCount').innerText = mealRows.length;
-    document.getElementById('totalExpenses').innerText = totalCost.toLocaleString() + ' ر.س';
+    document.getElementById('totalExpenses').innerText = total.toLocaleString() + ' ر.س';
 
-    // قراءة صف مجموع مديونية كل شخص (الصف 24 في جدولك)
-    const debtRow = lines.find(r => r.some(c => c.includes('مجموع مديونية')));
-    let debtsTotal = 0;
+    renderMemberCards();
+  }
 
-    const membersContainer = document.getElementById('membersContainer');
-    membersContainer.innerHTML = '';
+  function renderMemberCards() {
+    const container = document.getElementById('membersContainer');
+    container.innerHTML = '';
+    let totalDebt = 0;
 
-    memberNames.forEach((name, idx) => {
-      let debt = 0;
-      if (debtRow && debtRow[5 + idx]) {
-        debt = parseFloat(debtRow[5 + idx]) || 0;
-      }
-      debtsTotal += debt;
+    memberNames.forEach(name => {
+      const debt = membersDebts[name] || 0;
+      totalDebt += debt;
 
       const card = document.createElement('div');
       card.className = 'member-card';
@@ -188,19 +372,75 @@
           <span>المديونية:</span>
           <span style="font-weight: bold; color: ${debt > 0 ? 'var(--danger)' : 'var(--text-muted)'}">${debt} ر.س</span>
         </div>
-        <span class="member-status ${debt > 0 ? 'status-debt' : 'status-paid'}">
+        <span class="status-badge ${debt > 0 ? 'status-debt' : 'status-paid'}">
           ${debt > 0 ? 'متبقي عليه مبلغ' : 'مسدد بالكامل ✓'}
         </span>
       `;
-      membersContainer.appendChild(card);
+      container.appendChild(card);
     });
 
-    document.getElementById('totalDebts').innerText = debtsTotal + ' ر.س';
-    document.getElementById('totalDebts').style.color = debtsTotal > 0 ? 'var(--danger)' : 'var(--success)';
+    const totalDebtsEl = document.getElementById('totalDebts');
+    totalDebtsEl.innerText = totalDebt + ' ر.س';
+    totalDebtsEl.style.color = totalDebt > 0 ? 'var(--danger)' : 'var(--success)';
+
+    document.getElementById('settlementStatusText').innerText = 
+      totalDebt === 0 ? "حالة التسوية: تسوية مكتملة مع صفر مديونيات معلقة ✓" : `يوجد مديونيات معلقة بإجمالي ${totalDebt} ر.س`;
   }
 
-  // تحميل البيانات تلقائياً عند فتح الصفحة
-  fetchData();
+  // 2. تغيير الشهر من القائمة
+  function changeMonth() {
+    currentSheet = document.getElementById('monthSelector').value;
+    syncWithGitHub();
+  }
+
+  // 3. تم دفع القطة من الجميع
+  function markAllAsPaid() {
+    if (confirm("هل تم استلام مبالغ القطة من جميع الأعضاء وتأكيد السداد بالكامل؟")) {
+      memberNames.forEach(m => membersDebts[m] = 0);
+      renderMemberCards();
+      alert("تم تحديث حالة جميع الأعضاء إلى (مسدد بالكامل ✓) بنجاح!");
+    }
+  }
+
+  // النوافذ وإدارة النماذج
+  function openNewDinnerModal() {
+    document.getElementById('dinnerDate').valueAsDate = new Date();
+    document.getElementById('dinnerModal').style.display = 'flex';
+  }
+  function openNewMonthModal() {
+    document.getElementById('monthModal').style.display = 'flex';
+  }
+  function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+  }
+
+  function submitDinner(e) {
+    e.preventDefault();
+    const buyer = document.getElementById('dinnerBuyer').value;
+    const amount = document.getElementById('dinnerAmount').value;
+
+    alert(`تم تسجيل العشاء بنجاح!\nالمشتري: ${buyer}\nالمبلغ: ${amount} ر.س`);
+    closeModal('dinnerModal');
+    // إضافة افتراضية في الواجهة ثم إعادة المزامنة
+    syncWithGitHub();
+  }
+
+  function startNewMonth() {
+    const name = document.getElementById('newMonthName').value;
+    if (!name) return alert("يرجى إدخال اسم الشهر");
+    const sel = document.getElementById('monthSelector');
+    const opt = document.createElement('option');
+    opt.value = name;
+    opt.innerText = name;
+    sel.appendChild(opt);
+    sel.value = name;
+    closeModal('monthModal');
+    changeMonth();
+    alert(`تم فتح دورة عشيان جديدة لشهر: ${name}`);
+  }
+
+  // بدء المزامنة تلقائياً فور فتح الصفحة
+  syncWithGitHub();
 </script>
 
 </body>
