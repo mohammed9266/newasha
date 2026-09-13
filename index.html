@@ -43,10 +43,32 @@
     .btn-primary { background: var(--primary); color: #0b132b; }
     .btn-primary:hover { background: var(--primary-hover); }
     .btn-success { background: rgba(16, 185, 129, 0.15); color: var(--success); border-color: var(--success); }
+    .btn-success:hover { background: var(--success); color: #fff; }
     .btn-outline { background: var(--surface); color: #fff; border-color: var(--border); }
     .btn-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); border-color: var(--warning); }
     .btn-danger-sm { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid var(--danger); padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; }
     .btn-edit-sm { background: rgba(72, 202, 228, 0.15); color: var(--primary); border: 1px solid var(--primary); padding: 4px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; margin-left: 4px; }
+
+    .btn-pay-member {
+      width: 100%;
+      margin-top: 10px;
+      padding: 6px 10px;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid var(--success);
+      color: #34d399;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .btn-pay-member:hover { background: var(--success); color: #fff; }
+    .btn-pay-member:disabled {
+      background: transparent;
+      border-color: rgba(255,255,255,0.1);
+      color: var(--text-muted);
+      cursor: default;
+    }
 
     .month-select {
       background: var(--surface);
@@ -66,11 +88,21 @@
     .stat-value.primary { color: var(--primary); }
 
     .section-title { font-size: 18px; font-weight: 700; color: #e2e8f0; margin-bottom: 14px; }
-    .members-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
-    .member-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
-    .member-name { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
-    .member-info { font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; margin-bottom: 4px; }
-    .status-badge { display: inline-block; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: bold; margin-top: 4px; }
+    
+    /* شبكة بطاقات الأعضاء */
+    .members-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .member-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .member-name { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: #fff; }
+    .member-info { font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; margin-bottom: 5px; }
+    .status-badge { display: inline-block; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: bold; margin-top: 4px; text-align: center; }
     .status-paid { background: rgba(16, 185, 129, 0.15); color: var(--success); }
     .status-debt { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
 
@@ -127,7 +159,6 @@
       font-size: 13px;
     }
 
-    /* تنبيه الأسعار الثابتة */
     .pricing-hint {
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border);
@@ -207,8 +238,8 @@
     </div>
   </div>
 
-  <!-- Members Grid -->
-  <div class="section-title">👥 حالة الأعضاء والمديونيات</div>
+  <!-- Members Grid (مع زر دفع القطة لكل عضو) -->
+  <div class="section-title">👥 حالة الأعضاء وتصفير القطة لكل عضو</div>
   <div class="members-grid" id="membersContainer"></div>
 
   <!-- Meals Table -->
@@ -239,7 +270,7 @@
   <div class="settlement-banner">
     <div>
       <div style="font-weight: bold; font-size: 15px;" id="settlementStatusText">حالة التسوية: تسوية مكتملة</div>
-      <div style="font-size: 12px; color: var(--text-muted);">يمكن تصفير المديونيات لجميع الأعضاء عند اكتمال التحويلات المالية</div>
+      <div style="font-size: 12px; color: var(--text-muted);">يمكن تصفير المديونيات لجميع الأعضاء دفعة واحدة عند اكتمال التحويلات</div>
     </div>
     <button class="btn btn-success" onclick="markAllAsPaid()">✓ تم دفع القطة من الجميع</button>
   </div>
@@ -256,7 +287,6 @@
     <form id="dinnerForm" onsubmit="saveDinner(event)">
       <input type="hidden" id="editRowId" value="">
       
-      <!-- شريط تنبيه الأسعار الثابتة المحسوبة تلقائياً -->
       <div class="pricing-hint">
         <span>🍗 سعر الدجاجة: <strong>20 ريال</strong></span>
         <span>🍚 سعر كوب الأرز: <strong>2 ريال</strong></span>
@@ -279,10 +309,9 @@
         </div>
       </div>
 
-      <!-- كميات الدجاج والرز (الدجاج يقبل زيادة نصف 0.5 فقط) -->
       <div style="display: flex; gap: 10px;">
         <div class="form-group" style="flex: 1;">
-          <label>عدد الدجاج (يقبل أنصاف: 1.5، 2، 2.5...)</label>
+          <label>عدد الدجاج (زيادة بنصف: 1.5، 2، 2.5...)</label>
           <input type="number" id="chickenQty" value="2" min="0" step="0.5" oninput="autoCalculate()">
         </div>
         <div class="form-group" style="flex: 1;">
@@ -291,7 +320,6 @@
         </div>
       </div>
 
-      <!-- المشروبات والإضافات -->
       <div style="display: flex; gap: 8px;">
         <div class="form-group" style="flex: 1;">
           <label>البيبسي (ر.س)</label>
@@ -307,13 +335,11 @@
         </div>
       </div>
 
-      <!-- المشاركون بالعشاء -->
       <div class="form-group">
         <label>المشاركون بالعشاء (توزيع القطة عليهم بالتساوي):</label>
         <div class="attendance-grid" id="attendanceCheckboxes"></div>
       </div>
 
-      <!-- الحسبة التلقائية المباشرة -->
       <div class="calc-box">
         <div>
           <span>المبلغ الإجمالي</span>
@@ -350,9 +376,8 @@
 </div>
 
 <script>
-  // الأسعار الثابتة
-  const CHICKEN_PRICE = 20; // 20 ريال لكل حبة دجاج
-  const RICE_PRICE = 2;     // 2 ريال لكل كوب أرز
+  const CHICKEN_PRICE = 20;
+  const RICE_PRICE = 2;
 
   const memberNames = [
     "سليمان", "حامد", "الساير", "عبدالرحمن", "علي",
@@ -366,7 +391,7 @@
   function initMembers() {
     membersStats = {};
     memberNames.forEach(m => {
-      membersStats[m] = { mealsCount: 0, debt: 0, paid: 0 };
+      membersStats[m] = { mealsCount: 0, totalShare: 0, paidAmount: 0 };
     });
   }
 
@@ -396,7 +421,6 @@
       const chicken = parseFloat(r[3]) || 0;
       const rice = parseFloat(r[4]) || 0;
       const pepsi = parseFloat(r[5]) || 0;
-      // الحسبة التلقائية الثابتة: الدجاج 20 ريال، الرز 2 ريال
       const total = parseFloat(r[6]) || (chicken * CHICKEN_PRICE + rice * RICE_PRICE + pepsi);
       
       const attendees = [];
@@ -469,18 +493,28 @@
     document.getElementById('totalExpenses').innerText = totalExpenses.toLocaleString() + ' ر.س';
   }
 
+  // توزيع التكلفة بالتساوي على الحضور فقط دون تسجيل أي فائض للمصوت
   function calculateMembersFinances() {
+    // الاحتفاظ بالمدفوعات التي سددها الأعضاء سابقاً
+    const oldPaid = {};
+    memberNames.forEach(m => {
+      oldPaid[m] = membersStats[m] ? membersStats[m].paidAmount : 0;
+    });
+
     initMembers();
+
     mealsData.forEach(meal => {
-      if (membersStats[meal.buyer]) {
-        membersStats[meal.buyer].paid += meal.totalCost;
-      }
       meal.attendees.forEach(att => {
         if (membersStats[att]) {
           membersStats[att].mealsCount += 1;
-          membersStats[att].debt += meal.perPerson;
+          membersStats[att].totalShare += meal.perPerson; // نصيب الفرد فقط
         }
       });
+    });
+
+    // استرجاع المدفوعات المسجلة
+    memberNames.forEach(m => {
+      membersStats[m].paidAmount = oldPaid[m] || 0;
     });
   }
 
@@ -491,27 +525,41 @@
 
     memberNames.forEach(name => {
       const stats = membersStats[name];
-      const net = Math.round((stats.debt - stats.paid) * 10) / 10;
-      const isIndebted = net > 0;
-      if (isIndebted) totalOutstanding += net;
+      const remaining = Math.max(0, Math.round((stats.totalShare - stats.paidAmount) * 10) / 10);
+      const isPaid = remaining === 0;
+
+      totalOutstanding += remaining;
 
       const card = document.createElement('div');
       card.className = 'member-card';
       card.innerHTML = `
-        <div class="member-name">${name}</div>
-        <div class="member-info">
-          <span>حضور العشيان:</span>
-          <strong>${stats.mealsCount} وجبات</strong>
+        <div>
+          <div class="member-name">${name}</div>
+          <div class="member-info">
+            <span>حضور العشيان:</span>
+            <strong>${stats.mealsCount} وجبات</strong>
+          </div>
+          <div class="member-info">
+            <span>إجمالي نصيبه:</span>
+            <strong>${Math.round(stats.totalShare)} ر.س</strong>
+          </div>
+          <div class="member-info">
+            <span>المطلوب سداده:</span>
+            <strong style="color: ${remaining > 0 ? 'var(--danger)' : 'var(--success)'}; font-size: 14px;">
+              ${remaining > 0 ? `${remaining} ر.س` : '0 ر.س'}
+            </strong>
+          </div>
+          <div style="text-align: center;">
+            <span class="status-badge ${isPaid ? 'status-paid' : 'status-debt'}">
+              ${isPaid ? 'مسدد بالكامل ✓' : 'متبقي عليه مبلغ'}
+            </span>
+          </div>
         </div>
-        <div class="member-info">
-          <span>الصافي:</span>
-          <strong style="color: ${isIndebted ? 'var(--danger)' : 'var(--success)'};">
-            ${isIndebted ? `متبقي عليه: ${net} ر.س` : (net < 0 ? `له فائض: ${Math.abs(net)} ر.س` : 'خالص 0 ر.س')}
-          </strong>
+        <div>
+          <button class="btn-pay-member" onclick="payMember('${name}')" ${isPaid ? 'disabled' : ''}>
+            ${isPaid ? 'تم السداد ✓' : '✓ تم دفع القطة'}
+          </button>
         </div>
-        <span class="status-badge ${isIndebted ? 'status-debt' : 'status-paid'}">
-          ${isIndebted ? 'متبقي عليه مبلغ' : 'مسدد بالكامل ✓'}
-        </span>
       `;
       container.appendChild(card);
     });
@@ -521,7 +569,28 @@
     debtsEl.style.color = totalOutstanding > 0 ? 'var(--danger)' : 'var(--success)';
 
     document.getElementById('settlementStatusText').innerText =
-      totalOutstanding === 0 ? "حالة التسوية: تسوية مكتملة مع صفر مديونيات معلقة ✓" : `يوجد مديونيات معلقة بإجمالي: ${Math.round(totalOutstanding)} ر.س`;
+      totalOutstanding === 0 ? "حالة التسوية: تسوية مكتملة مع صفر مديونيات معلقة ✓" : `يوجد متبقيات معلقة بإجمالي: ${Math.round(totalOutstanding)} ر.س`;
+  }
+
+  // تصفير القطة لعضو محدد
+  function payMember(name) {
+    if (membersStats[name]) {
+      membersStats[name].paidAmount = membersStats[name].totalShare;
+      renderMembersCards();
+    }
+  }
+
+  // تصفير القطة للجميع
+  function markAllAsPaid() {
+    if (confirm("هل تم استلام مبالغ القطة من جميع الأعضاء وتأكيد السداد بالكامل؟")) {
+      memberNames.forEach(name => {
+        if (membersStats[name]) {
+          membersStats[name].paidAmount = membersStats[name].totalShare;
+        }
+      });
+      renderMembersCards();
+      alert("تم تصفير المطلوب من جميع الأعضاء وأصبحت مديونياتهم 0 ر.س ✓");
+    }
   }
 
   function buildAttendanceCheckboxes(selectedList = []) {
@@ -539,11 +608,8 @@
     });
   }
 
-  // الحسبة التلقائية: الدجاج = 20 ر.س ، الرز = 2 ر.س
   function autoCalculate() {
     let chickenQty = parseFloat(document.getElementById('chickenQty').value) || 0;
-    
-    // التأكد من أن الزيادة نصف فقط (مضاعفات 0.5)
     chickenQty = Math.round(chickenQty * 2) / 2;
 
     const riceQty = parseFloat(document.getElementById('riceQty').value) || 0;
@@ -653,18 +719,6 @@
     closeModal('dinnerModal');
     renderAll();
     alert("تم حفظ وتحديث الحسابات تلقائياً!");
-  }
-
-  function markAllAsPaid() {
-    if (confirm("هل تم استلام مبالغ القطة من الجميع وتسوية الحسابات بالكامل؟")) {
-      memberNames.forEach(m => {
-        if (membersStats[m]) {
-          membersStats[m].paid = membersStats[m].debt;
-        }
-      });
-      renderMembersCards();
-      alert("تمت تسوية جميع الحسابات وأصبحت المديونية 0 ر.س للجميع ✓");
-    }
   }
 
   function changeMonth() {
