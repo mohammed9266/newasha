@@ -126,8 +126,20 @@
       color: #fff;
       font-size: 13px;
     }
+
+    /* تنبيه الأسعار الثابتة */
+    .pricing-hint {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--primary);
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+    }
     
-    /* شبكة الحضور */
     .attendance-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
@@ -141,7 +153,6 @@
     .attendance-item { display: flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; }
     .attendance-item input { width: auto; cursor: pointer; }
 
-    /* صندوق الحسبة التلقائية */
     .calc-box {
       background: rgba(72, 202, 228, 0.08);
       border: 1px dashed var(--primary);
@@ -245,6 +256,12 @@
     <form id="dinnerForm" onsubmit="saveDinner(event)">
       <input type="hidden" id="editRowId" value="">
       
+      <!-- شريط تنبيه الأسعار الثابتة المحسوبة تلقائياً -->
+      <div class="pricing-hint">
+        <span>🍗 سعر الدجاجة: <strong>20 ريال</strong></span>
+        <span>🍚 سعر كوب الأرز: <strong>2 ريال</strong></span>
+      </div>
+
       <div style="display: flex; gap: 10px;">
         <div class="form-group" style="flex: 1;">
           <label>المصوت / المشتري</label>
@@ -262,27 +279,19 @@
         </div>
       </div>
 
-      <!-- كميات وتكاليف الدجاج والرز -->
-      <div style="display: flex; gap: 8px;">
+      <!-- كميات الدجاج والرز (الدجاج يقبل زيادة نصف 0.5 فقط) -->
+      <div style="display: flex; gap: 10px;">
         <div class="form-group" style="flex: 1;">
-          <label>عدد الدجاج</label>
-          <input type="number" id="chickenQty" value="2" min="0" oninput="autoCalculate()">
-        </div>
-        <div class="form-group" style="flex: 1;">
-          <label>سعر الحبة (ر.س)</label>
-          <input type="number" id="chickenPrice" value="22" min="0" oninput="autoCalculate()">
+          <label>عدد الدجاج (يقبل أنصاف: 1.5، 2، 2.5...)</label>
+          <input type="number" id="chickenQty" value="2" min="0" step="0.5" oninput="autoCalculate()">
         </div>
         <div class="form-group" style="flex: 1;">
           <label>أكواب الرز</label>
-          <input type="number" id="riceQty" value="2" min="0" oninput="autoCalculate()">
-        </div>
-        <div class="form-group" style="flex: 1;">
-          <label>سعر الكوب (ر.س)</label>
-          <input type="number" id="ricePrice" value="5" min="0" oninput="autoCalculate()">
+          <input type="number" id="riceQty" value="2" min="0" step="1" oninput="autoCalculate()">
         </div>
       </div>
 
-      <!-- المشروبات والإضافات (بيبسي / سلطات / إضافات) -->
+      <!-- المشروبات والإضافات -->
       <div style="display: flex; gap: 8px;">
         <div class="form-group" style="flex: 1;">
           <label>البيبسي (ر.س)</label>
@@ -298,13 +307,13 @@
         </div>
       </div>
 
-      <!-- اختيار الحضور لتوزيع القطة -->
+      <!-- المشاركون بالعشاء -->
       <div class="form-group">
         <label>المشاركون بالعشاء (توزيع القطة عليهم بالتساوي):</label>
         <div class="attendance-grid" id="attendanceCheckboxes"></div>
       </div>
 
-      <!-- صندوق الحسبة التلقائية المباشرة -->
+      <!-- الحسبة التلقائية المباشرة -->
       <div class="calc-box">
         <div>
           <span>المبلغ الإجمالي</span>
@@ -341,6 +350,10 @@
 </div>
 
 <script>
+  // الأسعار الثابتة
+  const CHICKEN_PRICE = 20; // 20 ريال لكل حبة دجاج
+  const RICE_PRICE = 2;     // 2 ريال لكل كوب أرز
+
   const memberNames = [
     "سليمان", "حامد", "الساير", "عبدالرحمن", "علي",
     "سلمان", "الجاسر", "محمد", "حسين", "مشعل", "خالد"
@@ -357,7 +370,6 @@
     });
   }
 
-  // رابط التصدير المباشر
   function getSheetUrl() {
     return `https://docs.google.com/spreadsheets/d/1-rFMRDa9R95g9UNscJDgNIfU7K6Uw-fKiG5jor_aU-c/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(currentSheet)}`;
   }
@@ -384,9 +396,9 @@
       const chicken = parseFloat(r[3]) || 0;
       const rice = parseFloat(r[4]) || 0;
       const pepsi = parseFloat(r[5]) || 0;
-      const total = parseFloat(r[6]) || (chicken * 22 + rice * 5 + pepsi);
+      // الحسبة التلقائية الثابتة: الدجاج 20 ريال، الرز 2 ريال
+      const total = parseFloat(r[6]) || (chicken * CHICKEN_PRICE + rice * RICE_PRICE + pepsi);
       
-      // قراءة الحضور من الأعمدة المقابلة للأعضاء
       const attendees = [];
       memberNames.forEach((name, mIdx) => {
         const val = r[7 + mIdx];
@@ -394,7 +406,7 @@
           attendees.push(name);
         }
       });
-      const finalAttendees = attendees.length > 0 ? attendees : [...memberNames]; // افتراضي الجميع إذا لم يحدد
+      const finalAttendees = attendees.length > 0 ? attendees : [...memberNames];
       const perPerson = finalAttendees.length > 0 ? (total / finalAttendees.length) : 0;
 
       return {
@@ -457,15 +469,12 @@
     document.getElementById('totalExpenses').innerText = totalExpenses.toLocaleString() + ' ر.س';
   }
 
-  // احتساب مديونيات ونصيب كل عضو تلقائياً بناءً على الحضور والدفع
   function calculateMembersFinances() {
     initMembers();
     mealsData.forEach(meal => {
-      // المشتري دفع المبلغ كاملاً
       if (membersStats[meal.buyer]) {
         membersStats[meal.buyer].paid += meal.totalCost;
       }
-      // كل شخص حضر عليه نصيب الفرد
       meal.attendees.forEach(att => {
         if (membersStats[att]) {
           membersStats[att].mealsCount += 1;
@@ -515,7 +524,6 @@
       totalOutstanding === 0 ? "حالة التسوية: تسوية مكتملة مع صفر مديونيات معلقة ✓" : `يوجد مديونيات معلقة بإجمالي: ${Math.round(totalOutstanding)} ر.س`;
   }
 
-  // بناء مربعات اختيار الحضور الـ 11 في نافذة الإدخال
   function buildAttendanceCheckboxes(selectedList = []) {
     const box = document.getElementById('attendanceCheckboxes');
     box.innerHTML = '';
@@ -531,39 +539,40 @@
     });
   }
 
-  // الحسبة التلقائية المباشرة في النموذج
+  // الحسبة التلقائية: الدجاج = 20 ر.س ، الرز = 2 ر.س
   function autoCalculate() {
-    const chickenQty = parseFloat(document.getElementById('chickenQty').value) || 0;
-    const chickenPrice = parseFloat(document.getElementById('chickenPrice').value) || 0;
+    let chickenQty = parseFloat(document.getElementById('chickenQty').value) || 0;
+    
+    // التأكد من أن الزيادة نصف فقط (مضاعفات 0.5)
+    chickenQty = Math.round(chickenQty * 2) / 2;
+
     const riceQty = parseFloat(document.getElementById('riceQty').value) || 0;
-    const ricePrice = parseFloat(document.getElementById('ricePrice').value) || 0;
     const pepsi = parseFloat(document.getElementById('pepsiCost').value) || 0;
     const salad = parseFloat(document.getElementById('saladCost').value) || 0;
     const extra = parseFloat(document.getElementById('extraCost').value) || 0;
 
-    const total = (chickenQty * chickenPrice) + (riceQty * ricePrice) + pepsi + salad + extra;
+    const chickenTotal = chickenQty * CHICKEN_PRICE;
+    const riceTotal = riceQty * RICE_PRICE;
+    const total = chickenTotal + riceTotal + pepsi + salad + extra;
 
     const checkedAttendees = Array.from(document.querySelectorAll('#attendanceCheckboxes input:checked')).map(cb => cb.value);
     const count = checkedAttendees.length;
     const perPerson = count > 0 ? (total / count) : 0;
 
-    document.getElementById('autoTotalAmount').innerText = Math.round(total) + ' ر.س';
+    document.getElementById('autoTotalAmount').innerText = (Math.round(total * 10) / 10) + ' ر.س';
     document.getElementById('autoAttendeesCount').innerText = count;
     document.getElementById('autoPerPersonAmount').innerText = (Math.round(perPerson * 10) / 10) + ' ر.س';
 
-    return { total, checkedAttendees, perPerson };
+    return { total, checkedAttendees, perPerson, chickenQty };
   }
 
-  // فتح وإغلاق النوافذ
   function openDinnerModal() {
     document.getElementById('modalTitle').innerText = "تسجيل عشاء جديد";
     document.getElementById('editRowId').value = "";
     document.getElementById('dinnerDate').valueAsDate = new Date();
     document.getElementById('dinnerBuyer').value = "";
     document.getElementById('chickenQty').value = 2;
-    document.getElementById('chickenPrice').value = 22;
     document.getElementById('riceQty').value = 2;
-    document.getElementById('ricePrice').value = 5;
     document.getElementById('pepsiCost').value = 5;
     document.getElementById('saladCost').value = 4;
     document.getElementById('extraCost').value = 0;
@@ -572,7 +581,6 @@
     document.getElementById('dinnerModal').style.display = 'flex';
   }
 
-  // إجراء التعديل
   function editDinner(id) {
     const meal = mealsData.find(m => m.id === id);
     if (!meal) return;
@@ -591,7 +599,6 @@
     document.getElementById('dinnerModal').style.display = 'flex';
   }
 
-  // إجراء الحذف
   function deleteDinner(id) {
     if (confirm(`هل أنت متأكد من حذف العشاء رقم (${id})؟`)) {
       mealsData = mealsData.filter(m => m.id !== id);
@@ -600,7 +607,6 @@
     }
   }
 
-  // حفظ العشاء (إضافة أو تعديل)
   function saveDinner(e) {
     e.preventDefault();
     const editId = document.getElementById('editRowId').value;
@@ -614,12 +620,11 @@
     }
 
     if (editId) {
-      // تعديل
       const meal = mealsData.find(m => m.id == editId);
       if (meal) {
         meal.buyer = buyer;
         meal.date = date;
-        meal.chickenQty = parseFloat(document.getElementById('chickenQty').value) || 0;
+        meal.chickenQty = calc.chickenQty;
         meal.riceQty = parseFloat(document.getElementById('riceQty').value) || 0;
         meal.pepsiCost = parseFloat(document.getElementById('pepsiCost').value) || 0;
         meal.saladCost = parseFloat(document.getElementById('saladCost').value) || 0;
@@ -629,12 +634,11 @@
         meal.perPerson = Math.round(calc.perPerson * 10) / 10;
       }
     } else {
-      // إضافة جديد
       const newMeal = {
         id: mealsData.length + 1,
         buyer: buyer,
         date: date,
-        chickenQty: parseFloat(document.getElementById('chickenQty').value) || 0,
+        chickenQty: calc.chickenQty,
         riceQty: parseFloat(document.getElementById('riceQty').value) || 0,
         pepsiCost: parseFloat(document.getElementById('pepsiCost').value) || 0,
         saladCost: parseFloat(document.getElementById('saladCost').value) || 0,
